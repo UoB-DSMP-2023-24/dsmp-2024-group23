@@ -12,3 +12,8 @@ I clean the tape data and the LOB data for one date as an example, which include
     - add column names
     - split the `Order` column into `Bid Price`, `Bid Quantity`, `Ask Price`, and `Ask Quantity`
     - check missing values and outliers
+
+### Datasets
+- `lob_data_expanded.csv`: Parsed LOB data 
+- `tape1.csv`: Parsed tape data
+- `combined_tape_data.csv`: Combined tape data(all dates)
