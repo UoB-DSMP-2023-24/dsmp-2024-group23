@@ -32,3 +32,10 @@ I clean the tape data and the LOB data for one date as an example, which include
   - Weighted Avg Bid Price: weighted average bid price
   - Weighted Avg Ask Price: weighted average ask price
   - Bid-Ask Quantity Ratio: ratio of total bid quantity to total ask quantity
+
+## Feature Engineering
+In the notebook `Feature_Engineering.ipynb`, I created some new features for the combined Tapes `Tapes_all.csv` and
+used one LOB as an example. Then I used the `Parsing_LOB.py` and `Parsing_LOB3.0.py` to apply the feature engineering to all LOB data.
+
+If you want to use the feature engineering, you can check the notebook
+and use the function `rolling_stats_diff` to create new features for the Tape data.
