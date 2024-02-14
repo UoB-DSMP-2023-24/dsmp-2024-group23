@@ -48,3 +48,7 @@ But you can just use the combined LOB data `processed_lob_data.csv` as the resul
 
 If you want to use the feature engineering, you can check the notebook
 and use the function `rolling_stats_diff` to create new features for the Tape data.
+
+### Visualization
+Visualization on tape and LOB data.
+For tape data, I used tableau to do the time-series visualization on tape data. Basicly shows the trading price of the stock from 2025-01-02 to 2025-07-01. 
