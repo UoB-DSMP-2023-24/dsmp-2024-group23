@@ -33,13 +33,21 @@ I clean the tape data and the LOB data for one date as an example, which include
   - Weighted Avg Ask Price: weighted average ask price
   - Bid-Ask Quantity Ratio: ratio of total bid quantity to total ask quantity
 
-## Feature Engineering
-In the notebook `Feature_Engineering.ipynb`, I created some new features for the combined Tapes `Tapes_all.csv` and
-used one LOB as an example. Then I used the `Parsing_LOB.py` and `Parsing_LOB3.0.py` to apply the feature engineering to all LOB data.
+### Packages
+#### 1. `Feature_extraction_tapes.py`
+This script has several functions to extract features from the tape data, including:
+- Rolling statistics;
+- Historical difference;
+- RSI
+- MACD
+- Bollinger Bands
+- Volume Weighted Average Price (VWAP)
 
-If you want to use the feature engineering, you can check the notebook
-and use the function `rolling_stats_diff` to create new features for the Tape data.
+#### 2. `Parsing_LOB.py` AND `Parsing_LOB3.0.py`
+The two scripts are used to parse the LOB data and extract features. 
+- `Parsing_LOB.py` is for one LOB data file.
+- `Parsing_LOB3.0.py` uses some functions from `Parsing_LOB.py` and is for extracting features and combine 
+all LOB data files into one file.
 
-### Visualization
-Visualization on tape and LOB data.
-  - For tape data, I used tableau to do the time-series visualization on tape data. Basicly shows the trading price of the stock from 2025-01-02 to 2025-07-01. 
+#### 3. `Resampling.py`
+This script is used to resample the tape data and LOB data to the same time frequency.

@@ -1,7 +1,7 @@
 import pandas as pd
 
 # 1. Rolling statistics and historical difference
-def calculat4e_rolling_stats_diff(data, column_name, time_windows):
+def calculate_rolling_stats_diff(data, column_name, time_windows):
     """
     计算给定列的滚动统计量和历史差分，并只返回这些计算结果。
 
