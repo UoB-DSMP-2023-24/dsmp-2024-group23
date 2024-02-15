@@ -1,7 +1,5 @@
 import pandas as pd
 
-# This is for extracting features from combined Tape data.
-
 # 1. Rolling statistics and historical difference
 def calculat4e_rolling_stats_diff(data, column_name, time_windows):
     """

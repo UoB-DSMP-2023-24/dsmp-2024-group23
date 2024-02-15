@@ -35,16 +35,7 @@ I clean the tape data and the LOB data for one date as an example, which include
 
 ## Feature Engineering
 In the notebook `Feature_Engineering.ipynb`, I created some new features for the combined Tapes `Tapes_all.csv` and
-used one LOB as an example. 
-
-### Tapes
-Using the [Feature_extraction.py](packages%2FFeature_extraction.py) package for extracting features from the Tapes data
-
-### LOB
-Using [Parsing_LOB.py](packages%2FParsing_LOB.py) and [Parsing_LOB3.0.py](packages%2FParsing_LOB3.0.py)
-
-But you can just use the combined LOB data `processed_lob_data.csv` as the results are all there.
-
+used one LOB as an example. Then I used the `Parsing_LOB.py` and `Parsing_LOB3.0.py` to apply the feature engineering to all LOB data.
 
 If you want to use the feature engineering, you can check the notebook
 and use the function `rolling_stats_diff` to create new features for the Tape data.
