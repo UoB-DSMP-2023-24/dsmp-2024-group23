@@ -33,22 +33,45 @@ def calculate_rolling_stats_diff(data, column_name, time_windows):
     return result_df
 
 # 2. RSI
-def calculate_RSI(data, column='Price', time_window='14D'):
+# def calculate_RSI(data, column='Price', time_window='14D'):
+#     """
+#     计算给定列的相对强弱指数（RSI）。
+#     :param data: dataframe
+#     :param column: price column
+#     :param time_window: set time type
+#     :return: RSI
+#     """
+#
+#     delta = data[column].diff()
+#     gain = (delta.where(delta > 0, 0)).rolling(window=time_window, min_periods=1).mean()
+#     loss = (-delta.where(delta < 0, 0)).rolling(window=time_window, min_periods=1).mean()
+#
+#     RS = gain / loss
+#     RSI = 100 - (100 / (1 + RS))
+#     return RSI
+
+# 对按每分钟采样后的tape数据使用下面这个RSI计算函数
+def calculate_RSI(data, column='Price', time_window=14):
     """
     计算给定列的相对强弱指数（RSI）。
-    :param data: dataframe
-    :param column: price column
-    :param time_window: set time type
-    :return: RSI
+
+    :param data: DataFrame，包含时间序列数据。
+    :param column: str，默认为'Price'，指定要计算RSI的列名。
+    :param time_window: int，用于计算RSI的时间窗口大小（以分钟为单位）。
+    :return: Series，包含计算得到的RSI值。
     """
+    # 将时间窗口转换为以分钟为单位，例如14天就是14*24*60分钟
+    minutes_in_window = time_window * 24 * 60
 
     delta = data[column].diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=time_window, min_periods=1).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=time_window, min_periods=1).mean()
+    gain = delta.where(delta > 0, 0).rolling(window=minutes_in_window, min_periods=1).mean()
+    loss = -delta.where(delta < 0, 0).rolling(window=minutes_in_window, min_periods=1).mean()
 
     RS = gain / loss
     RSI = 100 - (100 / (1 + RS))
+
     return RSI
+
 
 # 3. Bollinger Bands
 def calculate_bollinger_bands(data, column='Price', time_window='20D'):
@@ -68,13 +91,15 @@ def calculate_bollinger_bands(data, column='Price', time_window='20D'):
     return rolling_mean, upper_band, lower_band
 
 # 4. VWAP : Volume Weighted Average Price
-def calculate_VWAP(data):
+def calculate_VWAP(data,price='Price',volume='Volume'):
     """
     计算给定列的成交量加权平均价格（VWAP）。
+    :param volume:
+    :param price:
     :param data: dataframe
     :return: VWAP
     """
-    vwap = (data['Volume'] * data['Price']).cumsum() / data['Volume'].cumsum()
+    vwap = (data[price] * data[volume]).cumsum() / data[volume].cumsum()
     return vwap
 
 
