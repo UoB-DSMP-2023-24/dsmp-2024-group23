@@ -33,14 +33,15 @@ def process_lob_file(file_path, output_file, chunksize=10000):
 
             # 应用特征提取函数
             df_chunk[['Bid Price', 'Bid Quantity', 'Ask Price', 'Ask Quantity']] = df_chunk.apply(parse_orders, axis=1)
-            df_chunk[['Total Bid Quantity', 'Total Ask Quantity', 'Max Bid Price', 'Min Ask Price', 'Spread', 'Weighted Avg Bid Price', 'Weighted Avg Ask Price', 'Bid-Ask Quantity Ratio']] = df_chunk.apply(expand_orders, axis=1)
-
+            # df_chunk[['Total Bid Quantity', 'Total Ask Quantity', 'Max Bid Price', 'Min Ask Price', 'Spread', 'Weighted Avg Bid Price', 'Weighted Avg Ask Price', 'Bid-Ask Quantity Ratio']] = df_chunk.apply(expand_orders, axis=1)
+            df_chunk[['Total Bid Quantity', 'Total Ask Quantity', 'Max Bid Quantity', 'Min Ask Quantity', 'Max Bid Price', 'Min Ask Price']] = df_chunk.apply(expand_orders, axis=1)
             # 提取文件名中的日期
             date_str = extract_date_from_filename(file_path)
             df_chunk['Date'] = pd.to_datetime(date_str, format='%Y-%m-%d')
 
             # 选择指定的列并剔除缺失值
-            selected_columns = ['Timestamp', 'Exchange', 'Total Bid Quantity', 'Total Ask Quantity', 'Max Bid Price', 'Min Ask Price', 'Spread', 'Weighted Avg Bid Price', 'Weighted Avg Ask Price', 'Bid-Ask Quantity Ratio', 'Date']
+            # selected_columns = ['Timestamp', 'Exchange', 'Total Bid Quantity', 'Total Ask Quantity', 'Max Bid Price', 'Min Ask Price', 'Spread', 'Weighted Avg Bid Price', 'Weighted Avg Ask Price', 'Bid-Ask Quantity Ratio', 'Date']
+            selected_columns = ['Timestamp', 'Exchange', 'Total Bid Quantity', 'Total Ask Quantity', 'Max Bid Quantity', 'Min Ask Quantity', 'Max Bid Price', 'Min Ask Price', 'Date']
             df_chunk = df_chunk[selected_columns].dropna()
 
             # 追加到输出文件
@@ -52,7 +53,7 @@ def process_lob_file(file_path, output_file, chunksize=10000):
 
 if __name__ == "__main__":
     folder_path = 'E:\\Bristol\\mini_project\\JPMorgan_Set01\\test_datasets'  # 更新为你的文件夹路径
-    output_file = os.path.join(folder_path, 'processed_lob_data.csv')
+    output_file = os.path.join(folder_path, 'processed_lob_data_more.csv')
 
     # 确保输出文件不存在（防止重复追加）
     if os.path.exists(output_file):
