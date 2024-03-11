@@ -1,0 +1,117 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Mar 10 13:38:09 2024
+
+@author: keert
+"""
+
+import pandas as pd 
+import numpy as np 
+import matplotlib.pyplot as plt
+from statsmodels.tsa.arima.model import ARIMA
+import seaborn as sns
+import ast  # parse string representation of list to list
+
+#read the process resampled_lob_min.csv'.csv  
+ 
+LOB_df = pd.read_csv('C:/Users/keert/OneDrive/Desktop/Mini Project/resampled_lob_min.csv')
+
+pd.options.display.max_columns = None
+pd.options.display.max_rows = None
+
+LOB_df.head()
+
+LOB_df['Datetime'] = pd.to_datetime(LOB_df['Datetime'])
+
+#Visualisations
+
+#draw the time series graph
+plt.figure(figsize=(14,7))
+plt.plot(LOB_df['Max Bid Price'], label='Seconds Price')
+plt.title('Price Time Series')
+plt.xlabel('Datetime')
+plt.ylabel('Price')
+plt.legend()
+plt.show()
+
+
+#draw the time series graph
+plt.figure(figsize=(14,7))
+plt.plot(LOB_df['Min Ask Price'], label='Seconds Price')
+plt.title('Price Time Series')
+plt.xlabel('Datetime')
+plt.ylabel('Price')
+plt.legend()
+plt.show()
+
+#price trend
+plt.subplot(2, 2, 1)
+plt.plot(LOB_df['Datetime'], LOB_df['Min Ask Price'], label='Min Ask Price')
+plt.plot(LOB_df['Datetime'], LOB_df['Max Bid Price'], label='Max Bid Price')
+plt.xlabel('Datetime')
+plt.ylabel('Price')
+plt.title('Price Trends')
+plt.legend();plt.ion()
+
+plt.show()
+
+LOB_df['Spread'] = LOB_df['Min Ask Price'] - LOB_df['Max Bid Price']
+
+print("Basic statistics of LOB data:")
+print(LOB_df.describe())
+
+
+# Distribution of Price
+plt.figure(figsize=(10, 6))
+sns.histplot(data=LOB_df, x='Price', bins=20, kde=True)
+plt.title('Distribution of Price')
+plt.xlabel('Price')
+plt.ylabel('Frequency')
+plt.show()
+
+# Distribution of Quantity
+plt.figure(figsize=(10, 6))
+sns.histplot(data=LOB_df, x='Quantity', bins=20, kde=True)
+plt.title('Distribution of Quantity')
+plt.xlabel('Quantity')
+plt.ylabel('Frequency')
+plt.show()
+
+
+
+#--------------------------------------------------------------------------------------------------------
+
+# Plotting relevant graphs
+plt.figure(figsize=(12, 8))
+
+# Plot Min Ask Price and Max Bid Price
+plt.subplot(2, 2, 1)
+plt.plot(LOB_df['Datetime'], LOB_df['Min Ask Price'], label='Min Ask Price', color='blue')
+plt.plot(LOB_df['Datetime'], LOB_df['Max Bid Price'], label='Max Bid Price', color='orange')
+plt.xlabel('Datetime')
+plt.ylabel('Price')
+plt.title('Min Ask Price vs Max Bid Price')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# Plot Total Bid Quantity and Total Ask Quantity
+plt.subplot(2, 2, 2)
+plt.plot(LOB_df['Datetime'], LOB_df['Total Bid Quantity sum'], label='Total Bid Quantity', color='green')
+plt.plot(LOB_df['Datetime'], LOB_df['Total Ask Quantity sum'], label='Total Ask Quantity', color='red')
+plt.xlabel('Datetime')
+plt.ylabel('Quantity')
+plt.title('Total Bid Quantity vs Total Ask Quantity')
+plt.legend()
+
+# Plotting spread (difference between Max Bid Price and Min Ask Price)
+plt.subplot(2, 2, 3)
+plt.plot(LOB_df['Datetime'], LOB_df['Spread'], label='Spread', color='purple')
+plt.xlabel('Datetime')
+plt.ylabel('Spread')
+plt.title('Spread (Max Bid Price - Min Ask Price)')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
