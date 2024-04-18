@@ -1,0 +1,120 @@
+import gymnasium as gym
+from gymnasium import spaces
+import numpy as np
+import pandas as pd
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from stable_baselines3 import PPO
+from stable_baselines3.common.env_checker import check_env
+
+
+# 加载数据
+columns = ['Min Ask Price', 'Max Bid Price', 'Total Bid Quantity sum', 'Total Ask Quantity sum']
+df = pd.read_csv('resampled_lob_min.csv', usecols=columns)
+
+# 数据划分
+train_size = int(0.7 * len(df))  # 假设使用80%的数据作为训练集
+train_df = df.iloc[:train_size]
+test_df = df.iloc[train_size:train_size+1000]
+
+class StockTradingEnv(gym.Env):
+    metadata = {'render.modes': ['human']}
+    
+    def __init__(self, df):
+        super(StockTradingEnv, self).__init__()
+        self.df = df
+        self.max_steps = len(df)
+        self.reset()
+
+    def reset(self, *, seed=None, options=None):
+        super().reset(seed=seed)
+        self.current_step = 0
+        obs = self.df.iloc[self.current_step].values.astype(np.float32)
+        return obs, {}
+class StockTradingEnv(gym.Env):
+    metadata = {'render.modes': ['human']}
+    
+    def __init__(self, df):
+        super(StockTradingEnv, self).__init__()
+        self.df = df
+        self.max_steps = len(df)
+        self.reset()
+
+        # 动作和状态空间
+        self.action_space = spaces.Box(low=np.array([1, 0]), high=np.array([3, 1]), dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=np.inf, shape=(4,), dtype=np.float32)
+        
+        self.initial_balance = 100000
+        self.current_balance = self.initial_balance
+        self.holdings = 0
+
+    def _next_observation(self):
+        # 返回当前step的状态 
+        obs = self.df.iloc[self.current_step].values.astype(np.float32)
+        return obs
+
+    def _take_action(self, action):
+        action_type = action[0]
+        amount = action[1]
+
+        if action_type == 1:  # Buy
+            total_possible = self.current_balance / self.df.iloc[self.current_step]['Min Ask Price']
+            shares_bought = total_possible * amount
+            self.current_balance -= shares_bought * self.df.iloc[self.current_step]['Min Ask Price']
+            self.holdings += shares_bought
+        elif action_type == 2:  # Sell
+            shares_sold = self.holdings * amount
+            self.current_balance += shares_sold * self.df.iloc[self.current_step]['Min Ask Price']
+            self.holdings -= shares_sold
+
+    def step(self, action):
+        self._take_action(action)
+        self.current_step += 1
+
+        reward = self.current_balance + (self.holdings * self.df.iloc[self.current_step]['Min Ask Price']) - self.initial_balance
+        if reward < 0:
+            reward *= 10  # 或者选择更大的惩罚系数
+            #reward = -1
+
+        terminated = self.current_step >= self.max_steps - 1
+        truncated = False  
+        obs = self._next_observation()
+        info = {}  
+
+        return obs, reward, terminated, truncated, info
+
+
+
+    def reset(self, *, seed=None, options=None):
+        super().reset(seed=seed)
+        self.current_step = 0
+        obs = self.df.iloc[self.current_step].values.astype(np.float32)
+        return obs, {}
+
+    def render(self, mode='human', close=False):
+        profit = self.current_balance + (self.holdings * self.df.iloc[self.current_step]['Min Ask Price']) - self.initial_balance
+        print(f'Step: {self.current_step}, Profit: {profit}')
+
+
+
+
+# 实例化环境
+train_env = StockTradingEnv(train_df)
+test_env = StockTradingEnv(test_df)
+
+# 训练模型
+model = PPO("MlpPolicy", train_env, verbose=1)
+model.learn(total_timesteps=20000)
+
+# 测试模型
+obs, _ = test_env.reset()
+done = False
+while not done:
+    action, _ = model.predict(obs)
+    obs, rewards, done, truncated, info = test_env.step(action)
+    test_env.render()
+    if done:
+        obs, _ = test_env.reset()
+env = StockTradingEnv(df)
+check_env(env)  # 检查环境是否符合规范
