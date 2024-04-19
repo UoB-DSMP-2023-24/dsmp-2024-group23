@@ -120,6 +120,18 @@ At each time step, the cell state (\( c^t \)) is updated through a combination o
 \end{center}
 \end{figure}
 
+The configuration of the LSTM model was optimized through hyperparameter tuning, including the number of LSTM layers, the number of units in each layer, the learning rate, and the batch size. The model was trained using the Adam optimizer and Mean Squared Error (MSE) as the loss function. The training process involved feeding the model with historical LOB data and iteratively updating the weights to minimize the loss.
+The model was evaluated on a separate test set(the last 10\% of the whole data) to assess its predictive performance and generalization capabilities.
+Below is the basic configuration of the LSTM model:
+\begin{itemize}
+    \item \textbf{Batch Size}: 256
+    \item \textbf{Learning Rate}: 0.001
+    \item \textbf{Epochs}: 50
+    \item \textbf{Sequence Length}: 20
+    \item \textbf{LSTM Layers}: 3
+    \item \textbf{Hidden Size}: 256 units
+    \item \textbf{Dropout Rate}: 0.2
+\end{itemize}
 
 
 \subsection{Trading Simulator Development}
