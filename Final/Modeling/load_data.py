@@ -70,7 +70,7 @@ def load_data(data_path, sequence_length=10, batch_size=64, test_size=0.1, val_s
 
 def load_data2(data_path, sequence_length=10, batch_size=64, test_size=0.1, val_size=0.1, predict_steps=1):
     # Load the dataset
-    train_set, val_set, test_set = preprocess_data(data_path)
+    train_set, val_set, test_set,_,_ = preprocess_data(data_path)
 
     # Assume train_set, val_set, test_set are DataFrames with the same structure
     # X_train = train_set.drop(columns=['price']).values
