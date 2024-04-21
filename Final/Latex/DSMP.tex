@@ -120,9 +120,7 @@ At each time step, the cell state (\( c^t \)) is updated through a combination o
 \end{center}
 \end{figure}
 
-The configuration of the LSTM model was optimized through hyperparameter tuning.
-The model was trained using the Adam optimizer and Mean Squared Error (MSE) as the loss function.
-The training process involved feeding the model with historical LOB data and iteratively updating the weights to minimize the loss.
+The configuration of the LSTM model was optimized through hyperparameter tuning, including the number of LSTM layers, the number of units in each layer, the learning rate, and the batch size. The model was trained using the Adam optimizer and Mean Squared Error (MSE) as the loss function. The training process involved feeding the model with historical LOB data and iteratively updating the weights to minimize the loss.
 The model was evaluated on a separate test set(the last 10\% of the whole data) to assess its predictive performance and generalization capabilities.
 Below is the basic configuration of the LSTM model:
 \begin{itemize}
@@ -130,15 +128,49 @@ Below is the basic configuration of the LSTM model:
     \item \textbf{Learning Rate}: 0.001
     \item \textbf{Epochs}: 50
     \item \textbf{Sequence Length}: 20
-    \item \textbf{Feature Dimension}: 16
     \item \textbf{LSTM Layers}: 2
     \item \textbf{Hidden Size}: 256 units
     \item \textbf{Dropout Rate}: 0.2
 \end{itemize}
 
 
+
+
 \subsection{Trading Simulator Development}
 Using the forecasts generated from the LSTM model, a trading simulator was constructed to simulate real-world trading. This simulator utilized the predictions to make trading decisions, attempting to maximize profits through strategic buy and sell orders. The trading strategy was based on a set of predetermined rules derived from the historical data patterns and predictive signals obtained from the model.
+
+\subsubsection{Volatility}
+The number of trades is adjusted based on current market volatility and risk tolerance to ensure trades are in line with the investor's risk tolerance.
+Volatility is calculated from the rolling standard deviation of log returns.
+
+\subsubsection{RSI}
+The RSI (Relative Strength Index) is a momentum oscillator used to measure the speed and magnitude of changes in asset prices. It was developed by J. Welles Wilder Jr. in 1978 and is widely used in technical analysis. The RSI is designed to determine whether market conditions are overbought or oversold, providing traders with potential buy or sell signals.
+
+First calculate the volume of price change:\[\Delta P = P_t - P_{t-1}\]
+
+Then calculate the Average Gain and Average Loss:\[\text{Gain}_{\text{avg}} = \frac{\sum_{i=1}^{n} \max(\Delta P_i, 0)}{n}\]
+
+\[\text{Loss}_{\text{avg}} = \frac{\sum_{i=1}^{n} \max(-\Delta P_i, 0)}{n}\]
+
+Here \(n\) is the size of the rolling window and \(\Delta P_i\) is the price change at the \(i\) point in time.
+Calculate Relative Strength:\[RS = \frac{\text{Gain}_{\text{avg}}}{\text{Loss}_{\text{avg}}}\]
+
+Final calculation of RSI:\[RSI = 100 - \left(\frac{100}{1 + RS}\right)\\\]
+
+
+\subsubsection{OFI}
+OFI provides a measure of how the buying and selling power in a market changes over time, which can be used as a predictor of price movement. When OFI is positive, buyer power prevails; when OFI is negative, seller power prevails.
+
+
+\Delta W^m\left(\tau_n\right)= \begin{cases}r^m\left(\tau_n\right), & \text { if } b^m\left(\tau_n\right)>b^m\left(\tau_{n-1}\right), \\ r^m\left(\tau_n\right)-r^m\left(\tau_{n-1}\right), & \text { if } b^m\left(\tau_n\right)=b^m\left(\tau_{n-1}\right), \\ -r^m\left(\tau_{n-1}\right), & \text { if } b^m\left(\tau_n\right)<b^m\left(\tau_{n-1}\right) ;
+\end{cases}
+
+\Delta V^m\left(\tau_n\right)= \begin{cases}-q^m\left(\tau_{n-1}\right), & \text { if } a^m\left(\tau_n\right)>a^m\left(\tau_{n-1}\right), \\ q^m\left(\tau_n\right)-q^m\left(\tau_{n-1}\right), & \text { if } a^m\left(\tau_n\right)=a^m\left(\tau_{n-1}\right), \\ q^m\left(\tau_n\right), & \text { if } a^m\left(\tau_n\right)<a^m\left(\tau_{n-1}\right);
+\end{cases}
+
+Where OFI is: e^m(\tau_n) = \Delta W^m(\tau_n) - \Delta V^m(\tau_n)
+
+
 
 \subsection{Evaluation Metrics}
 Model performance was assessed using several metrics:
@@ -166,85 +198,15 @@ For LOB data, we wrote a Python script to parse the txt file, extract the date o
 We performed a simple data cleaning including removal of missing values, extraction of sliding window features as well as some features in the financial domain such as RSI, OFI (Order Flow Imbalance), etc., which were used as trading signals when we built the trading simulator later.
 
 
-\subsection{Example sub-section}\label{AA}
-Define abbreviations and acronyms the first time they are used in the text, 
-even after they have been defined in the abstract.
-
-Number equations consecutively. Use a long dash rather than a hyphen for a minus
-sign. Punctuate equations with commas or periods when they are part of a 
-sentence, as in:
-\begin{equation}
-a+b=\gamma\label{eq}
-\end{equation}
-
-Be sure that the 
-symbols in your equation have been defined before or immediately following 
-the equation. Use ``\eqref{eq}'', not ``Eq.~\eqref{eq}'' or ``equation \eqref{eq}'', except at 
-the beginning of a sentence: ``Equation \eqref{eq} is . . .''
-
-\subsection{Some Common Mistakes}\label{SCM}
-\begin{itemize}
-\item The word ``data'' is plural, not singular.
-\item Do not use the word ``essentially'' to mean ``approximately'' or ``effectively''.
-\item In your paper title, if the words ``that uses'' can accurately replace the word ``using'', capitalize the ``u''; if not, keep using lower-cased.
-\item Be aware of the different meanings of the homophones ``affect'' and ``effect'', ``complement'' and ``compliment'', ``discreet'' and ``discrete'', ``principal'' and ``principle''.
-\item Do not confuse ``imply'' and ``infer''.
-\item The prefix ``non'' is not a word; it should be joined to the word it modifies, usually without a hyphen.
-\item There is no period after the ``et'' in the Latin abbreviation ``et al.''.
-\item The abbreviation ``i.e.'' means ``that is'', and the abbreviation ``e.g.'' means ``for example''.
-\end{itemize}
-An excellent style manual for science writers is \cite{b7}.
-
-
-\subsection{Figures and Tables}
-\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
-bottom of columns. Avoid placing them in the middle of columns. Large 
-figures and tables may span across both columns. Figure captions should be 
-below the figures; table heads should appear above the tables. Insert 
-figures and tables after they are cited in the text. Use the abbreviation 
-``Fig.~\ref{fig}'', even at the beginning of a sentence.
-
-\begin{table}[htbp]
-\caption{Table Type Styles}
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-\cline{2-4} 
-\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
-\hline
-copy& More table copy$^{\mathrm{a}}$& &  \\
-\hline
-\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-\end{tabular}
-\label{tab1}
-\end{center}
-\end{table}
-
-\begin{figure}[htbp]
-\centerline{\includegraphics{fig1.png}}
-\caption{Example of a figure caption.}
-\label{fig}
-\end{figure}
-
-Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
-rather than symbols or abbreviations when writing Figure axis labels to 
-avoid confusing the reader. As an example, write the quantity 
-``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
-units in the label, present them within parentheses. Do not label axes only 
-with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
-\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
-quantities and units. For example, write ``Temperature (K)'', not 
-``Temperature/K''.
 
 \subsection{References}
 
-Please number citations consecutively within brackets \cite{b1}. The 
-sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
+Please number citations consecutively within brackets \cite{b1}. The
+sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference
+number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at
 the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
 
-Capitalize only the first word in a paper title, except for proper nouns and 
+Capitalize only the first word in a paper title, except for proper nouns and
 element symbols.
 
 \section{Data Description / Preparation}
@@ -255,6 +217,7 @@ element symbols.
 
 \section{Further Work and Improvement}
 {\color{blue}Explore what can be done further based on the discussed insights and ways to improve.}
+
 
 \section{Conclusion}
 {\color{blue}A brief summary of the key insights in your report.}
