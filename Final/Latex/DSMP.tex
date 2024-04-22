@@ -7,6 +7,8 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -61,7 +63,7 @@
 
 \begin{abstract}
 This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes, 
+This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes,
 or Math in Paper Title or Abstract.
 \end{abstract}
 
@@ -69,17 +71,17 @@ or Math in Paper Title or Abstract.
 {\color{blue}A brief discussion of the problem context, motivation, analysis questions/aims and proposed methods and approaches used.}
 
 This document is a model and instructions for \LaTeX.
-Please observe the 8 page limit. 
+Please observe the 8 page limit.
 
 \section{Literature Review}
 {\color{blue}An overview of related work of similar research in the domain.}
 
-The IEEEtran class file is used to format your paper and style the text. All margins, 
-column widths, line spaces, and text fonts are prescribed; please do not 
+The IEEEtran class file is used to format your paper and style the text. All margins,
+column widths, line spaces, and text fonts are prescribed; please do not
 alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement 
-and others are deliberate, using specifications that anticipate your paper 
-as one part of the entire proceedings, and not as an independent document. 
+measures proportionately more than is customary. This measurement
+and others are deliberate, using specifications that anticipate your paper
+as one part of the entire proceedings, and not as an independent document.
 Please do not revise any of the current designations.
 
 \section{Methodology}
@@ -87,11 +89,24 @@ Please do not revise any of the current designations.
 
 The data for this project was sourced directly from JP Morgan, which provided level 2 datasets including tapes and Limit Order Books (LOB). Tapes consist of a sequential record of all transaction prices and volumes, effectively capturing market activity over the course of the trading day. The LOB data comprises all outstanding orders and provides detailed insights into buy and sell orders at various price levels, crucial for analyzing market depth and price dynamics. This comprehensive data collection was foundational for developing accurate financial models and simulations.
 
-% if there is no space, delete this section!!!!
-\subsection{Visualization}
-In order to visualise what we were working on, we mainly used Python to draw relevant images, including aspects of data exploration, model prediction results and so on. This helped us to get a fuller picture of our large dataset and prepared us for feature engineering.
+
 
 \subsection{Model Selection and Implementation}
+We use the weighted average price as the model prediction target\cite{transactions}:
+
+\[
+p = \frac{(P_{\text{bid}} \times Q_{\text{bid}}) + (P_{\text{ask}} \times Q_{\text{ask}})}{Q_{\text{bid}} + Q_{\text{ask}}}
+\]
+
+where:
+\begin{itemize}
+    \item \( P_{\text{bid}} \) is the Max Bid Price.
+    \item \( Q_{\text{bid}} \) is the Max Bid Quantity.
+    \item \( P_{\text{ask}} \) is the Min Ask Price.
+    \item \( Q_{\text{ask}} \) is the Min Ask Quantity.
+\end{itemize}
+
+
 
 \subsubsection{ARIMA}
 Initially, the Autoregressive Integrated Moving Average (ARIMA) model was employed for baseline predictions. This model is suitable for univariate time series data that shows evidence of autocorrelation and non-stationarity. The model parameters \(p, d, q\) were determined based on the autocorrelation and partial autocorrelation plots, alongside AIC (Akaike Information Criterion) for optimizing the model fit.
@@ -114,7 +129,7 @@ At each time step, the cell state (\( c^t \)) is updated through a combination o
 
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics[width=\linewidth]{./img/lstm_structure.png} 
+\includegraphics[width=\linewidth]{./img/lstm_structure.png}
 \caption{Structure of LSTM.}
 \label{fig.1}
 \end{center}
@@ -144,7 +159,7 @@ The number of trades is adjusted based on current market volatility and risk tol
 Volatility is calculated from the rolling standard deviation of log returns.
 
 \subsubsection{RSI}
-The RSI (Relative Strength Index) is a momentum oscillator used to measure the speed and magnitude of changes in asset prices. It was developed by J. Welles Wilder Jr. in 1978 and is widely used in technical analysis. The RSI is designed to determine whether market conditions are overbought or oversold, providing traders with potential buy or sell signals.
+The RSI (Relative Strength Index) is a momentum oscillator used to measure the speed and magnitude of changes in asset prices. It was developed by J. Welles Wilder Jr. in 1978 and is widely used in technical analysis. The RSI is designed to determine whether market conditions are overbought or oversold, providing traders with potential buy or sell signals\cite{RSI-MACD}.
 
 First calculate the volume of price change:\[\Delta P = P_t - P_{t-1}\]
 
@@ -159,7 +174,7 @@ Final calculation of RSI:\[RSI = 100 - \left(\frac{100}{1 + RS}\right)\\\]
 
 
 \subsubsection{OFI}
-OFI provides a measure of how the buying and selling power in a market changes over time, which can be used as a predictor of price movement. When OFI is positive, buyer power prevails; when OFI is negative, seller power prevails.
+OFI provides a measure of how the buying and selling power in a market changes over time, which can be used as a predictor of price movement. When OFI is positive, buyer power prevails; when OFI is negative, seller power prevails\cite{OFI}.
 
 
 \Delta W^m\left(\tau_n\right)= \begin{cases}r^m\left(\tau_n\right), & \text { if } b^m\left(\tau_n\right)>b^m\left(\tau_{n-1}\right), \\ r^m\left(\tau_n\right)-r^m\left(\tau_{n-1}\right), & \text { if } b^m\left(\tau_n\right)=b^m\left(\tau_{n-1}\right), \\ -r^m\left(\tau_{n-1}\right), & \text { if } b^m\left(\tau_n\right)<b^m\left(\tau_{n-1}\right) ;
@@ -199,18 +214,8 @@ We performed a simple data cleaning including removal of missing values, extract
 
 
 
-\subsection{References}
 
-Please number citations consecutively within brackets \cite{b1}. The
-sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference
-number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at
-the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
 
-Capitalize only the first word in a paper title, except for proper nouns and
-element symbols.
-
-\section{Data Description / Preparation}
-{\color{blue}Includes description of data sources, samples and steps for pre-processing if any.}
 
 \section{Results and Discussion}
 {\color{blue}Reporting on the experiments with discussion on insights. Technical challenges are to be discussed here too.}
@@ -222,15 +227,11 @@ element symbols.
 \section{Conclusion}
 {\color{blue}A brief summary of the key insights in your report.}
 
-\begin{thebibliography}{00}
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
-\end{thebibliography}
+\section{Bibliographical References}\label{sec:reference}
+
+\bibliographystyle{abbrv}
+\bibliography{reference}
+
 
 \appendix
 {\color{blue}The document up to this section should be no more than 8 pages. The appendix section is optional. You can include additional material here, but it will not be marked.}
