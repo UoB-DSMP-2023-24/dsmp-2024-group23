@@ -236,4 +236,8 @@ Total Normalised daily profits 64.55
 Number of buys:  869
 Number of sells:  900
 
+## EXP9 LSTM Multi steps
+Buy strategy: when the model's predictions for the next 5 steps are all incremental
+Sell strategy: when the model's predictions for the next 5 steps are all decremental
+
 ![simulation_boxplot.png](..%2Ffigures%2Fsimulation_boxplot.png)
